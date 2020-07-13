@@ -23,7 +23,7 @@ import os
 
 from compare_gan.src.multi_gan import dataset
 import numpy as np
-from scipy.misc import imsave
+import imageio
 import tensorflow as tf
 
 flags = tf.flags
@@ -39,7 +39,7 @@ FLAGS = flags.FLAGS
 
 def save_image(im, name):
   im = im[:, :, 0] if im.shape[2] == 1 else im
-  imsave(os.path.join(FLAGS.save_dir, name), im)
+  imageio.imwrite(os.path.join(FLAGS.save_dir, name), im)
 
 
 def main(unused_argv):

@@ -32,7 +32,7 @@ from six.moves import range
 import tensorflow as tf
 
 slim = tf.contrib.slim
-tfgan = tf.contrib.gan
+import tensorflow_gan as tfgan
 
 
 def _validate_image_inputs(inputs, validate_power2=True):

@@ -26,7 +26,7 @@ from six.moves import range
 import tensorflow as tf
 
 logging = tf.logging
-tfgan_eval = tf.contrib.gan.eval
+from tensorflow_gan import eval as tfgan_eva
 
 
 def get_fid_function(real_image_tensor, gen_image_tensor, num_gen_images,

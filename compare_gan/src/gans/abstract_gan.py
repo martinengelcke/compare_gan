@@ -30,6 +30,7 @@ from compare_gan.src.gans.ops import lrelu, batch_norm, linear, conv2d, deconv2d
 import numpy as np
 from six.moves import range
 import tensorflow as tf
+import tensorflow_gan as tfgan
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -400,7 +401,7 @@ class AbstractGAN(object):
   def train(self, sess, progress_reporter=None):
     """Runs the training algorithm."""
 
-    self.fake_images_merged = tf.contrib.gan.eval.image_grid(
+    self.fake_images_merged = tfgan.eval.image_grid(
         self.fake_images,
         grid_shape=self._image_grid_shape(),
         image_shape=(self.input_height, self.input_width),
