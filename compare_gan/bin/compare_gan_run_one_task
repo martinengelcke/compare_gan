@@ -30,6 +30,8 @@ from compare_gan.src import task_utils
 
 from compare_gan.src import fid_score
 
+import compare_gan.src.multi_gan.run_one_task as multi_gan
+
 flags = tf.flags
 FLAGS = flags.FLAGS
 logging = tf.logging
@@ -40,6 +42,8 @@ flags.DEFINE_string("command", "all", "What command to execute: all, train, eval
 flags.DEFINE_bool("enable_tf_profile", False, "Whether to run TFProf.")
 
 def main(_):
+  multi_gan.AddGansAndDatasets()
+
   tf.logging.set_verbosity(tf.logging.INFO)
   task_workdir = os.path.join(FLAGS.workdir, str(FLAGS.task_num))
   task = simple_task_pb2.Task()
