@@ -227,6 +227,33 @@ def GetMetaTasks(experiment_name):
         "embedding_dim": 32,
     }
 
+  elif experiment_name == "multi_gan-clevr-k5":
+    meta_config = {
+        "gan_type": ["MultiGAN",],
+        "penalty_type": [consts.WGANGP_PENALTY],
+        "discriminator_normalization": [consts.SPECTRAL_NORM],
+        "architecture": consts.DCGAN_ARCH,
+        "dataset": ["clevr"],
+        "tf_seed": [0],
+        "training_steps": [1000000],
+        "save_checkpoint_steps": [20000],
+        "batch_size": [64],
+        "optimizer": ["adam"],
+        "learning_rate": [0.0001],
+        "lambda": [1],
+        "beta1": [0.9],
+        "beta2": [0.999],
+        "disc_iters": [5],
+        # Model params.
+        "k": [5],
+        "aggregate": ["sum_clip"],
+        "n_heads": 4,
+        "n_blocks": 2,
+        "share_block_weights": True,
+        "z_dim": 64,
+        "embedding_dim": 32,
+    }
+
   #######################
   ## PAPER EXPERIMENTS ##
   #######################
