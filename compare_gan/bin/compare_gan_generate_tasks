@@ -29,6 +29,8 @@ import tensorflow as tf
 from compare_gan.src import generate_tasks_lib
 from compare_gan.src import task_utils
 
+import compare_gan.src.multi_gan.run_one_task as multi_gan
+
 tf.flags.DEFINE_string(
     "workdir", "/tmp/workdir",
     "Path to the workdir. This flag is required.")
@@ -41,7 +43,10 @@ FLAGS = tf.flags.FLAGS
 
 def main(_):
   print("Running Experiments Generator for experiment %s" % FLAGS.experiment)
-  tasks = generate_tasks_lib.GetTasks(FLAGS.experiment)
+  try:
+    tasks = generate_tasks_lib.GetTasks(FLAGS.experiment)
+  except ValueError:
+    tasks = multi_gan.GetMetaTasks(FLAGS.experiment)
   task_utils.WriteTasksToDirectories(FLAGS.workdir, tasks)
 
 if __name__ == "__main__":
