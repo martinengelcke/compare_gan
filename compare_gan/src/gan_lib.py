@@ -234,23 +234,22 @@ def run_with_options(options, task_workdir, progress_reporter=None,
       raise ValueError("TPU experiments must run with use_estimator=True.")
     if warm_start_from:
       raise ValueError("Warm starting is only supported for estimator.")
-    with tf.Graph().as_default():
-      if "tf_seed" in options:
-        logging.info("Setting tf random seed to %s", options["tf_seed"])
-        tf.set_random_seed(options["tf_seed"])
-        # NumPy random seed is already set above.
-      with profile_context(tfprofile_dir):
-        config = tf.ConfigProto(allow_soft_placement=True)
-        with tf.Session(config=config) as sess:
-          gan = create_gan(
-              gan_type=gan_type,
-              dataset=dataset,
-              dataset_content=dataset_content,
-              options=options,
-              checkpoint_dir=checkpoint_dir,
-              result_dir=result_dir,
-              gan_log_dir=gan_log_dir)
-          gan.build_model()
-          print(" [*] Training started!")
-          gan.train(sess, progress_reporter)
-          print(" [*] Training finished!")
+    if "tf_seed" in options:
+      logging.info("Setting tf random seed to %s", options["tf_seed"])
+      tf.set_random_seed(options["tf_seed"])
+      # NumPy random seed is already set above.
+    with profile_context(tfprofile_dir):
+      config = tf.ConfigProto(allow_soft_placement=True)
+      with tf.Session(config=config) as sess:
+        gan = create_gan(
+            gan_type=gan_type,
+            dataset=dataset,
+            dataset_content=dataset_content,
+            options=options,
+            checkpoint_dir=checkpoint_dir,
+            result_dir=result_dir,
+            gan_log_dir=gan_log_dir)
+        gan.build_model()
+        print(" [*] Training started!")
+        gan.train(sess, progress_reporter)
+        print(" [*] Training finished!")
