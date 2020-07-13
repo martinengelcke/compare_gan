@@ -58,3 +58,38 @@ to compute FID scores.
 During data loading we resize the raw images (320 x 480) to (160, 240) using
 bilinear interpolation, and take a center crop to obtain (128 x 128) images.
 These are then normalized to 0.0-1.0 before being fed to the network.
+
+## Training a model
+
+### Setup data
+For debug experiment, download data from [here](https://drive.google.com/drive/folders/1K7IeRbwSKA8Ho6SZwNMeK2lwsQsUuiIG) into `multigan_data`.
+
+For CLEVR experiment, download data from [here](https://cs.stanford.edu/people/jcjohns/clevr/) and put the `images` folder into `multigan_data/clevr`.
+
+### Setup a task
+Debug model:
+```
+python compare_gan/bin/multi_gan_generate_tasks --workdir workdir/debug --experiment multi_gan-debug
+```
+MultiGAN on CLEVR with k=5 components:
+```
+python compare_gan/bin/multi_gan_generate_tasks --workdir workdir/clevr-k5 --experiment multi_gan-clevr-k5
+```
+
+### Run the task
+Debug model:
+```
+python compare_gan/bin/compare_gan_run_one_task --workdir workdir/debug --multigan_dataset_root multigan_data
+```
+MultiGAN on CLEVR with k=5 components:
+```
+python compare_gan/bin/compare_gan_run_one_task --workdir workdir/clevr-k5 --multigan_dataset_root multigan_data
+```
+
+## Train with different configs
+
+Edit `compare_pan/src/multi_gan/run_one_task` and add a new experiment to `GetMetaTasks(experiment_name)`.
+Now you can create the experiment as before with:
+```
+python compare_gan/bin/multi_gan_generate_tasks --workdir workdir/YOUR-MULTI_GAN-EXP --experiment your-multi_gan-exp
+```
