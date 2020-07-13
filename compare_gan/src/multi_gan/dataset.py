@@ -39,9 +39,8 @@ MULTI_MNIST_CONFIGS = [
 
 def unpack_clevr_image(image_data):
   """Returns an image and a label. 0-1 range."""
-  value = tf.parse_single_example(
-      image_data, features={"image": tf.FixedLenFeature([], tf.string)})
-  image = tf.decode_raw(value["image"], tf.uint8)
+  image = tf.read_file(image_data)
+  image = tf.image.decode_png(image, channels=3)
   image = tf.reshape(image, [1, 320, 480, 3])
   image = tf.image.resize_bilinear(image, size=(160, 240))
   image = tf.squeeze(tf.image.resize_image_with_crop_or_pad(image, 128, 128))
@@ -52,14 +51,9 @@ def unpack_clevr_image(image_data):
 
 def load_clevr(dataset_name, split_name, num_threads, buffer_size):
   del dataset_name
-  filenames = tf.data.Dataset.list_files(
-      os.path.join(FLAGS.multigan_dataset_root, "clevr/%s*" % split_name))
-
-  return tf.data.TFRecordDataset(
-      filenames,
-      buffer_size=buffer_size,
-      num_parallel_reads=num_threads).map(
-          unpack_clevr_image, num_parallel_calls=num_threads)
+  return tf.data.Dataset.list_files(
+    os.path.join(FLAGS.multigan_dataset_root, "clevr/%s/*.png" % split_name)
+    ).map(unpack_clevr_image, num_parallel_calls=num_threads)
 
 
 def unpack_multi_mnist_image(split_name, k, rgb, image_data):
