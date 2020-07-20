@@ -31,8 +31,7 @@ def check_folder(log_dir):
 
 
 def save_images(images, image_path):
-  with tf.gfile.Open(image_path, "wb") as f:
-    imageio.imwrite(f, images * 255.0)
+  imageio.imwrite(image_path, (images * 255.0).astype('uint8'))
 
 
 def gaussian(batch_size, n_dim, mean=0., var=1.):
