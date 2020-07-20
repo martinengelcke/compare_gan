@@ -61,6 +61,15 @@ These are then normalized to 0.0-1.0 before being fed to the network.
 
 ## Training a model
 
+### Setup conda environment
+```
+conda env create -f compare_gan/src/multigan/environment.yml
+conda activate multigan_env
+python -m pip install -e . --user
+# when you are done
+conda deactivate
+```
+
 ### Setup data
 For debug experiment, download data from [here](https://drive.google.com/drive/folders/1K7IeRbwSKA8Ho6SZwNMeK2lwsQsUuiIG) into `multigan_data`.
 
@@ -69,11 +78,11 @@ For CLEVR experiment, download data from [here](https://cs.stanford.edu/people/j
 ### Setup a task
 Debug model:
 ```
-python compare_gan/bin/multi_gan_generate_tasks --workdir workdir/debug --experiment multi_gan-debug
+python compare_gan/bin/compare_gan_generate_tasks --workdir workdir/debug --experiment multi_gan-debug
 ```
 MultiGAN on CLEVR with k=5 components:
 ```
-python compare_gan/bin/multi_gan_generate_tasks --workdir workdir/clevr-k5 --experiment multi_gan-clevr-k5
+python compare_gan/bin/compare_gan_generate_tasks --workdir workdir/clevr-k5 --experiment multi_gan-clevr-k5
 ```
 
 ### Run the task
