@@ -6,7 +6,7 @@ dependencies:
   - blas=1.0=mkl
   - ca-certificates=2020.6.24=0
   - certifi=2020.6.20=py37_0
-  - cudatoolkit=10.1.243=h6bb024c_0
+  - cudatoolkit=10.0.130=0
   - freetype=2.10.2=h5ab3b9f_0
   - imageio=2.9.0=py_0
   - intel-openmp=2020.1=217
