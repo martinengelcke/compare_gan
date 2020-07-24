@@ -63,7 +63,7 @@ These are then normalized to 0.0-1.0 before being fed to the network.
 
 ### Setup conda environment
 ```
-conda env create -f compare_gan/src/multigan/environment.yml
+conda env create -f compare_gan/src/multi_gan/environment.yml
 conda activate multigan_env
 python -m pip install -e . --user
 # when you are done
