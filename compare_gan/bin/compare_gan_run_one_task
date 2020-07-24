@@ -22,6 +22,8 @@ from __future__ import division
 import os
 
 import tensorflow as tf
+from tensorflow_gan import eval as tfgan_eval
+
 from google.protobuf import text_format
 from compare_gan.src import gan_lib
 from compare_gan.src import eval_gan_lib
@@ -64,7 +66,7 @@ def main(_):
     logging.info("\n====== Running evaluation ======\n\n")
     eval_gan_lib.RunTaskEval(
         options, task_workdir,
-        tf.contrib.gan.eval.get_graph_def_from_disk(
+        tfgan_eval.get_graph_def_from_disk(
             os.path.join(FLAGS.dataset_root,
                          "inceptionv1_for_inception_score.pb")))
 
