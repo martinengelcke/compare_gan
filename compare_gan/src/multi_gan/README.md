@@ -61,11 +61,14 @@ These are then normalized to 0.0-1.0 before being fed to the network.
 
 ## Training a model
 
-### Setup conda environment
+### Setup conda environment and library
+Do this instead (!) of following the instructions on the main repo README:
 ```
 conda env create -f compare_gan/src/multi_gan/environment.yml
 conda activate multigan_env
 python -m pip install -e . --user
+compare_gan_prepare_datasets.sh
+mv /tmp/datasets datasets
 # when you are done
 conda deactivate
 ```
