@@ -186,15 +186,14 @@ def GetRealImages(dataset,
   # Get real images from the dataset. In the case of a 1-channel
   # dataset (like mnist) convert it to 3 channels.
   data_x = []
-  with tf.Graph().as_default():
-    get_next = dataset_content.make_one_shot_iterator().get_next()
-    with tf.train.MonitoredTrainingSession() as sess:
-      for i in range(num_examples):
-        try:
-          data_x.append(sess.run(get_next[0]))
-        except tf.errors.OutOfRangeError:
-          logging.error("Reached the end of dataset. Read: %d samples." % i)
-          break
+  get_next = dataset_content.make_one_shot_iterator().get_next()
+  with tf.train.MonitoredTrainingSession() as sess:
+    for i in range(num_examples):
+      try:
+        data_x.append(sess.run(get_next[0]))
+      except tf.errors.OutOfRangeError:
+        logging.error("Reached the end of dataset. Read: %d samples." % i)
+        break
 
   real_images = np.array(data_x)
   if real_images.shape[0] != num_examples:
@@ -907,7 +906,10 @@ def RunTaskEval(options, task_workdir, inception_graph, out_file="scores.csv"):
         if param in options:
           output_row.append(options[param])
         else:
-          output_row.append(str(DEFAULT_VALUES[param]))
+          try:
+            output_row.append(str(DEFAULT_VALUES[param]))
+          except:
+            output_row.append('NA')
       writer.writerow(output_row)
 
       f.flush()
