@@ -794,6 +794,9 @@ def RunCheckpointEval(checkpoint_path, task_workdir, options, tasks_to_run):
   logging.info("Fake data processed. Starting tasks for checkpoint: %s.",
                checkpoint_path)
 
+  # Save fake images to file
+  np.save(f'{checkpoint_path}_fakeimages.npy', fake_images)
+
   for task in tasks_to_run:
     result_dict.update(task.RunAfterSession(options, fake_images, real_images))
 
