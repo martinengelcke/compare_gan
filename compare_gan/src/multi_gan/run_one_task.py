@@ -236,7 +236,7 @@ def GetMetaTasks(experiment_name):
         "dataset": ["clevr"],
         "tf_seed": [0],
         "training_steps": [1000000],
-        "save_checkpoint_steps": [20000],
+        "save_checkpoint_steps": [100000],
         "batch_size": [64],
         "optimizer": ["adam"],
         "learning_rate": [0.0001],
@@ -246,10 +246,11 @@ def GetMetaTasks(experiment_name):
         "disc_iters": [5],
         # Model params.
         "k": [5],
-        "aggregate": ["sum_clip"],
-        "n_heads": 4,
+        "aggregate": ["alpha"],
+        "n_heads": 2,
         "n_blocks": 2,
-        "share_block_weights": True,
+        "share_block_weights": False,
+        "background_interaction": True,
         "z_dim": 64,
         "embedding_dim": 32,
     }
