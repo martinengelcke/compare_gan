@@ -229,9 +229,9 @@ def GetMetaTasks(experiment_name):
 
   elif experiment_name == "multi_gan-clevr-k5":
     meta_config = {
-        "gan_type": ["MultiGAN",],
+        "gan_type": ["MultiGANBackground",],
         "penalty_type": [consts.WGANGP_PENALTY],
-        "discriminator_normalization": [consts.SPECTRAL_NORM],
+        "discriminator_normalization": [consts.NO_NORMALIZATION],
         "architecture": consts.DCGAN_ARCH,
         "dataset": ["clevr"],
         "tf_seed": [0],
@@ -250,7 +250,10 @@ def GetMetaTasks(experiment_name):
         "n_heads": 2,
         "n_blocks": 2,
         "share_block_weights": False,
-        "background_interaction": True,
+        "background_interaction": False,
+        "z_dim": 64,
+        "embedding_dim": 32,
+    }
         "z_dim": 64,
         "embedding_dim": 32,
     }
