@@ -256,6 +256,10 @@ def GetMetaTasks(experiment_name):
     }
   
   elif experiment_name == "multi_gan-clevr-3-to-6":
+    """
+    This experiment mirrors the best 5-GAN rel. bg. on CLEVR from the paper,
+    but with k=6.
+    """
     meta_config = {
         "gan_type": ["MultiGANBackground",],
         "penalty_type": [consts.WGANGP_PENALTY],
@@ -263,8 +267,8 @@ def GetMetaTasks(experiment_name):
         "architecture": consts.DCGAN_ARCH,
         "dataset": ["clevr-3-to-6"],
         "tf_seed": [0],
-        "training_steps": [1000],
-        "save_checkpoint_steps": [100],
+        "training_steps": [1000000],
+        "save_checkpoint_steps": [100000],
         "batch_size": [64],
         "optimizer": ["adam"],
         "learning_rate": [0.0001],
