@@ -21,6 +21,11 @@ from __future__ import print_function
 
 import functools
 import os
+import json
+import random
+from PIL import Image
+import PIL
+import numpy as np
 import tensorflow as tf
 
 flags = tf.flags
@@ -52,8 +57,76 @@ def unpack_clevr_image(image_data):
 def load_clevr(dataset_name, split_name, num_threads, buffer_size):
   del dataset_name
   return tf.data.Dataset.list_files(
-    os.path.join(FLAGS.multigan_dataset_root, "clevr/%s/*.png" % split_name)
+    os.path.join(FLAGS.multigan_dataset_root,
+                 "clevr/images/%s/*.png" % split_name)
     ).map(unpack_clevr_image, num_parallel_calls=num_threads)
+
+def load_clevr_3to6(dataset_name, split_name, num_threads, buffer_size):
+  """
+  Based on code from ogroth.
+  """
+  del dataset_name
+  # --- Get filenames ---
+  num_objects_min = 3
+  num_objects_max = 6
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "clevr")
+  image_files = []
+  image_annotations = []
+  if split_name == 'train':  # Merge train and val splits
+    for split in ['train', 'val']:
+      # Load file names and annotations
+      image_files.extend([
+          os.path.join(data_root, 'images', split, fn) \
+          for fn in sorted(os.listdir(os.path.join(data_root, 'images', split)))
+      ])
+      with open(os.path.join(data_root, 'scenes', 'CLEVR_%s_scenes.json' % split)) as fp:
+        train_scenes = json.load(fp)['scenes']
+      image_annotations.extend(train_scenes)
+    # Filter by number of objects
+    obj_cnt_list = list(
+        zip(
+            image_files,
+            [len(scn['objects']) for scn in image_annotations]
+        )
+    )
+    obj_cnt_filter_index = [
+        t[1] >= num_objects_min and t[1] <= num_objects_max \
+        for t in obj_cnt_list
+    ]
+    # Apply filter
+    image_files = [image_files[idx] for idx, t in enumerate(obj_cnt_filter_index) if t]
+    image_annotations = [image_annotations[idx] for idx, t in enumerate(obj_cnt_filter_index) if t]
+    print(">>> Loaded %d images from split 'train+val'." % len(image_files))
+  elif split_name == 'val':  # Load validation data only
+    image_files.extend([
+          os.path.join(data_root, 'images', 'val', fn) \
+        for fn in sorted(os.listdir(os.path.join(data_root, 'images', 'test')))
+    ])
+    image_files = image_files[:100]
+    print(">>> Loaded %d images from split 'val'." % len(image_files))
+  elif split_name == 'test':  # Load test data only
+    image_files.extend([
+          os.path.join(data_root, 'images', 'test', fn) \
+        for fn in sorted(os.listdir(os.path.join(data_root, 'images', 'test')))
+    ])
+    image_files = image_files[:100]
+    print(">>> Loaded %d images from split 'test'." % len(image_files))
+  else:
+    raise ValueError("Invalid split!")
+  # --- Create TF dataset ---
+  def datamap(file_path):
+    image = tf.read_file(file_path)
+    image = tf.image.decode_png(image, channels=3)
+    image = tf.reshape(image, [1, 320, 480, 3])
+    image = tf.image.resize_bilinear(image, size=(128, 128))
+    image = tf.squeeze(image)
+    image = tf.cast(image, tf.float32) / 255.0
+    dummy_label = tf.constant(value=0, dtype=tf.int32)
+    return image, dummy_label
+  return tf.data.Dataset.from_generator(
+      lambda: image_files,
+      output_types=tf.string,
+    ).map(datamap, num_parallel_calls=num_threads)
 
 
 def unpack_multi_mnist_image(split_name, k, rgb, image_data):
@@ -99,6 +172,15 @@ def get_dataset_params():
           "dataset_name": "clevr",
           "eval_test_samples": 10000
       },
+      "clevr-3-to-6": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "clevr-3-to-6",
+          "eval_test_samples": 10000
+      }
   }
 
   # Add multi-mnist configs.
@@ -124,6 +206,7 @@ def get_datasets():
 
   datasets = {
       "clevr": load_clevr,
+      "clevr-3-to-6": load_clevr_3to6,
   }
 
   # Add multi-mnist configs.

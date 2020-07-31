@@ -254,6 +254,31 @@ def GetMetaTasks(experiment_name):
         "z_dim": 64,
         "embedding_dim": 32,
     }
+  
+  elif experiment_name == "multi_gan-clevr-3-to-6":
+    meta_config = {
+        "gan_type": ["MultiGANBackground",],
+        "penalty_type": [consts.WGANGP_PENALTY],
+        "discriminator_normalization": [consts.NO_NORMALIZATION],
+        "architecture": consts.DCGAN_ARCH,
+        "dataset": ["clevr-3-to-6"],
+        "tf_seed": [0],
+        "training_steps": [1000],
+        "save_checkpoint_steps": [100],
+        "batch_size": [64],
+        "optimizer": ["adam"],
+        "learning_rate": [0.0001],
+        "lambda": [1],
+        "beta1": [0.9],
+        "beta2": [0.999],
+        "disc_iters": [5],
+        # Model params.
+        "k": [6],
+        "aggregate": ["alpha"],
+        "n_heads": 2,
+        "n_blocks": 2,
+        "share_block_weights": False,
+        "background_interaction": False,
         "z_dim": 64,
         "embedding_dim": 32,
     }
