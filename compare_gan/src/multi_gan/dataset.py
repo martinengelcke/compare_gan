@@ -134,7 +134,7 @@ def clevr_obc(data_root, split_name, num_threads, buffer_size):
   Based on code from ogroth.
   """
   # --- Get filenames ---
-  if slit_name == 'train':
+  if split_name in ['train', 'val']:
       data_dir = '%s/train/' % data_root
       ordered = False
   else:
