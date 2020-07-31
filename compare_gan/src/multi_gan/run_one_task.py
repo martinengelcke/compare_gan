@@ -261,7 +261,7 @@ def GetMetaTasks(experiment_name):
     but with k=6.
     """
     meta_config = {
-        "gan_type": ["MultiGANBackground",],
+        "gan_type": ["MultiGANBackground"],
         "penalty_type": [consts.WGANGP_PENALTY],
         "discriminator_normalization": [consts.NO_NORMALIZATION],
         "architecture": consts.DCGAN_ARCH,
@@ -282,7 +282,7 @@ def GetMetaTasks(experiment_name):
         "n_heads": 2,
         "n_blocks": 2,
         "share_block_weights": False,
-        "background_interaction": False,
+        "background_interaction": True,
         "z_dim": 64,
         "embedding_dim": 32,
     }
