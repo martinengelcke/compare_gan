@@ -173,6 +173,39 @@ def load_clevr_obc_5vbg(dataset_name, split_name, num_threads, buffer_size):
   return clevr_obc(data_root, split_name, num_threads, buffer_size)
 
 
+def load_shapestacks5(dataset_name, split_name, num_threads, buffer_size):
+  """
+  Based on code from ogroth.
+  """
+  del dataset_name
+  # --- Get filenames ---
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "shapestacks")
+  data_dir = '%s/recordings/' % data_root
+  dir = [data_dir+f for f in os.listdir(data_dir) if f[0]=='e']
+  dirs = []
+  for i in range(len(dir)):
+      dir_name = dir[i]
+      if os.path.exists(dir_name) and int(dir_name.split('-h=')[-1][0])<=5:
+          name = [dir_name+'/'+f for f in os.listdir(dir_name) if f[-4:]=='.png' and (f[-13]=='_' or int(f[-12])<2)]
+          if len(name) > 0:
+              ## Look at the h option and load only 2...
+              dirs.extend(name)
+  # --- Create TF dataset ---
+  def datamap(file_path):
+    image = tf.read_file(file_path)
+    image = tf.image.decode_png(image, channels=3)
+    image = tf.reshape(image, [1, 224, 224, 3])
+    image = tf.image.resize_bilinear(image, size=(128, 128))
+    image = tf.squeeze(image)
+    image = tf.cast(image, tf.float32) / 255.0
+    dummy_label = tf.constant(value=0, dtype=tf.int32)
+    return image, dummy_label
+  return tf.data.Dataset.from_generator(
+      lambda: dirs,
+      output_types=tf.string,
+    ).map(datamap, num_parallel_calls=num_threads)
+
+
 def unpack_multi_mnist_image(split_name, k, rgb, image_data):
   """Returns an image and a label in [0, 1] range."""
   c_dim = 3 if rgb else 1
@@ -243,6 +276,15 @@ def get_dataset_params():
           "dataset_name": "clevr-obc-5vbg",
           "eval_test_samples": 10000
       },
+      "shapestacks5": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "shapestacks5",
+          "eval_test_samples": 10000
+      },
   }
 
   # Add multi-mnist configs.
@@ -271,6 +313,7 @@ def get_datasets():
       "clevr-3-to-6": load_clevr_3to6,
       "clevr-obc-5": load_clevr_obc_5,
       "clevr-obc-5vbg": load_clevr_obc_5vbg,
+      "shapestacks5": load_shapestacks5,
   }
 
   # Add multi-mnist configs.
