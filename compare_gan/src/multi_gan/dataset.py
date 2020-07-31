@@ -133,7 +133,6 @@ def clevr_obc(data_root, split_name, num_threads, buffer_size):
   """
   Based on code from ogroth.
   """
-  del dataset_name
   # --- Get filenames ---
   if slit_name == 'train':
       data_dir = '%s/train/' % data_root
