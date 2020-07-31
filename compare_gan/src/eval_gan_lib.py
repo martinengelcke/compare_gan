@@ -21,6 +21,8 @@ from __future__ import print_function
 import abc
 import csv
 import os
+import tarfile
+import shutil
 
 from compare_gan.src import fid_score as fid_score_lib
 from compare_gan.src import gan_lib
@@ -36,6 +38,7 @@ import pandas as pd
 import scipy.spatial
 from six.moves import range
 import tensorflow as tf
+from PIL import Image
 
 flags = tf.flags
 logging = tf.logging
@@ -794,8 +797,25 @@ def RunCheckpointEval(checkpoint_path, task_workdir, options, tasks_to_run):
   logging.info("Fake data processed. Starting tasks for checkpoint: %s.",
                checkpoint_path)
 
-  # Save fake images to file
-  np.save(f'{checkpoint_path}_fakeimages.npy', fake_images)
+  # save fake images as PNGs and pack into a tar.gz archive
+  sample_dir = os.path.join(
+      os.path.dirname(checkpoint_path),
+      os.path.splitext(os.path.basename(checkpoint_path))[0]
+      )
+  os.makedir(sample_dir, exists_ok=True)
+  # convert image tensor to uint8
+  fake_images = np.uint8(fake_images)
+  # loop over batch and save with PIL.Image
+  for i in range(fake_images.shape[0]):
+    img_path = os.path.join(sample_dir, f'{i:05d}.png')
+    Image.fromarray(fake_images[i], 'RGB').save(img_path)
+  # compress sample_dir as tar.gz
+  tar_path = f'{sample_dir}.tar.gz'
+  with tarfile.open(tar_path, 'w:gz') as tar:
+    tar.add(sample_dir, arcname=os.path.basename(sample_dir))
+  # rm sample_dir via shutil
+  shutil.rmtree(sample_dir)
+  # np.save(f'{checkpoint_path}_fakeimages.npy', fake_images)
 
   for task in tasks_to_run:
     result_dict.update(task.RunAfterSession(options, fake_images, real_images))
