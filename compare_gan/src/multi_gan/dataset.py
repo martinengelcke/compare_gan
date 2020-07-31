@@ -129,6 +129,50 @@ def load_clevr_3to6(dataset_name, split_name, num_threads, buffer_size):
     ).map(datamap, num_parallel_calls=num_threads)
 
 
+def clevr_obc(data_root, split_name, num_threads, buffer_size):
+  """
+  Based on code from ogroth.
+  """
+  del dataset_name
+  # --- Get filenames ---
+  if slit_name == 'train':
+      data_dir = '%s/train/' % data_root
+      ordered = False
+  else:
+      data_dir = '%s/test/' % data_root
+      ordered = True 
+  dirs = []
+  for d1 in os.listdir(data_dir):
+      if d1[-4:]=='.png':
+          dirs.append('%s/%s' % (data_dir, d1))
+  # --- Create TF dataset ---
+  def datamap(file_path):
+    image = tf.read_file(file_path)
+    image = tf.image.decode_png(image, channels=3)
+    image = tf.reshape(image, [1, 96, 96, 3])
+    image = tf.image.resize_bilinear(image, size=(128, 128))
+    image = tf.squeeze(image)
+    image = tf.cast(image, tf.float32) / 255.0
+    dummy_label = tf.constant(value=0, dtype=tf.int32)
+    return image, dummy_label
+  return tf.data.Dataset.from_generator(
+      lambda: dirs,
+      output_types=tf.string,
+    ).map(datamap, num_parallel_calls=num_threads)
+
+
+def load_clevr_obc_5(dataset_name, split_name, num_threads, buffer_size):
+  del dataset_name
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "clevr_obc_5")
+  return clevr_obc(data_root, split_name, num_threads, buffer_size)
+
+
+def load_clevr_obc_5vbg(dataset_name, split_name, num_threads, buffer_size):
+  del dataset_name
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "clevr_obc_5vbg")
+  return clevr_obc(data_root, split_name, num_threads, buffer_size)
+
+
 def unpack_multi_mnist_image(split_name, k, rgb, image_data):
   """Returns an image and a label in [0, 1] range."""
   c_dim = 3 if rgb else 1
@@ -180,7 +224,25 @@ def get_dataset_params():
           "c_dim": 3,
           "dataset_name": "clevr-3-to-6",
           "eval_test_samples": 10000
-      }
+      },
+      "clevr-obc-5": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "clevr-obc-5",
+          "eval_test_samples": 10000
+      },
+      "clevr-obc-5vbg": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "clevr-obc-5vbg",
+          "eval_test_samples": 10000
+      },
   }
 
   # Add multi-mnist configs.
@@ -207,6 +269,8 @@ def get_datasets():
   datasets = {
       "clevr": load_clevr,
       "clevr-3-to-6": load_clevr_3to6,
+      "clevr-obc-5": load_clevr_obc_5,
+      "clevr-obc-5vbg": load_clevr_obc_5vbg,
   }
 
   # Add multi-mnist configs.
