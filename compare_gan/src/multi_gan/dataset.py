@@ -205,6 +205,59 @@ def load_shapestacks5(dataset_name, split_name, num_threads, buffer_size):
     ).map(datamap, num_parallel_calls=num_threads)
 
 
+def load_bowl2balls(data_root, train=True):
+  # gather list of video directories
+  if train:
+    data_dir = os.path.join(data_root, 'train')
+  else:
+    data_dir = os.path.join(data_root, 'test')
+  video_dirs = []
+  for d in os.listdir(data_dir):
+    video_dirs.append(os.path.join(data_dir, d, 'render'))
+  # gather filenames from directories
+  for video_dir in video_dirs:
+    img_files = []
+    _seq_len = len([f for f in os.listdir(video_dir) if f[-4:]=='.jpg'])
+    for idx in range(_seq_len):
+      img_file = f'{video_dir}/{3*idx:04d}.jpg'
+      img_files.append(img_file)
+  # build tf.dataset from filenames
+  dataset = tf.dataset.Dataset.from_generator(lambda: img_files, output_types=tf.string)
+  # map preprocessing function over filenames
+  def _preprocess(file_path):
+    image = tf.read_file(file_path)
+    image = tf.image.decode_jpg(image, channels=3)
+    image = tf.expand_dims(image, axis=0)  # add batch dimension
+    image = tf.image.resize_bilinear(image, size=(128, 128))
+    image = tf.squeeze(image)
+    image = tf.cast(image, tf.float32) / 255.0
+    dummy_label = tf.constant(value=0, dtype=tf.int32)
+    return image, dummy_label
+  return dataset.map(_preprocess, num_parallel_calls=num_threads)
+
+
+def load_realtraffic(data_root):
+  video_dirs = [os.path.join(data_root, f) for f in os.listdir(data_root) if f[0]=='f']
+  img_files = []
+  for video_dir in video_dirs:
+    img_seq = sorted([video_dir+'/'+f for f in os.listdir(video_dir) if f[-5:]=='.jpeg'])
+    for idx in range(len(img_seq)-3):
+      img_files.append(img_seq[idx:idx+2:2])
+  # build tf.dataset from filenames
+  dataset = tf.dataset.Dataset.from_generator(lambda: img_files, output_types=tf.string)
+  # map preprocessing function over filenames
+  def _preprocess(file_path):
+    image = tf.read_file(file_path)
+    image = tf.image.decode_jpg(image, channels=3)
+    image = tf.expand_dims(image, axis=0)  # add batch dimension
+    image = tf.image.resize_bilinear(image, size=(128, 128))
+    image = tf.squeeze(image)
+    image = tf.cast(image, tf.float32) / 255.0
+    dummy_label = tf.constant(value=0, dtype=tf.int32)
+    return image, dummy_label
+  return dataset.map(_preprocess, num_parallel_calls=num_threads)
+
+
 def unpack_multi_mnist_image(split_name, k, rgb, image_data):
   """Returns an image and a label in [0, 1] range."""
   c_dim = 3 if rgb else 1
@@ -284,6 +337,24 @@ def get_dataset_params():
           "dataset_name": "shapestacks5",
           "eval_test_samples": 10000
       },
+      "bowl2balls": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "bowl2balls",
+          "eval_test_samples": 10000
+      },
+      "realtraffic": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "realtraffic",
+          "eval_test_samples": 10000
+      },
   }
 
   # Add multi-mnist configs.
@@ -313,6 +384,8 @@ def get_datasets():
       "clevr-obc-5": load_clevr_obc_5,
       "clevr-obc-5vbg": load_clevr_obc_5vbg,
       "shapestacks5": load_shapestacks5,
+      "bowl2balls": load_bowl2balls,
+      "realtraffic": load_realtraffic,
   }
 
   # Add multi-mnist configs.
