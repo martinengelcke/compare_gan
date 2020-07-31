@@ -16,3 +16,8 @@ dist/
 # Sublime project files
 *.sublime-project
 *.sublime-workspace
+
+# Custom
+multigan_data
+multigan_env
+workdir
