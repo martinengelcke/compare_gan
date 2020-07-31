@@ -18,6 +18,7 @@ dist/
 *.sublime-workspace
 
 # Custom
+.vscode/*
 multigan_data
 multigan_env
 workdir
