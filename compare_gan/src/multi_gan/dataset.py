@@ -234,7 +234,7 @@ def load_bowl2balls(dataset_name, split_name, num_threads, buffer_size):
   # map preprocessing function over filenames
   def _preprocess(file_path):
     image = tf.read_file(file_path)
-    image = tf.image.decode_jpg(image, channels=3)
+    image = tf.image.decode_jpeg(image, channels=3)
     image = tf.expand_dims(image, axis=0)  # add batch dimension
     image = tf.image.resize_bilinear(image, size=(128, 128))
     image = tf.squeeze(image)
@@ -258,7 +258,7 @@ def load_realtraffic(dataset_name, split_name, num_threads, buffer_size):
   # map preprocessing function over filenames
   def _preprocess(file_path):
     image = tf.read_file(file_path)
-    image = tf.image.decode_jpg(image, channels=3)
+    image = tf.image.decode_jpeg(image, channels=3)
     image = tf.expand_dims(image, axis=0)  # add batch dimension
     image = tf.image.resize_bilinear(image, size=(128, 128))
     image = tf.squeeze(image)
