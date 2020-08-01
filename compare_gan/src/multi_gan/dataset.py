@@ -172,6 +172,12 @@ def load_clevr_obc_5vbg(dataset_name, split_name, num_threads, buffer_size):
   return clevr_obc(data_root, split_name, num_threads, buffer_size)
 
 
+def load_clevr_obc_3(dataset_name, split_name, num_threads, buffer_size):
+  del dataset_name
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "clevr_obc_3")
+  return clevr_obc(data_root, split_name, num_threads, buffer_size)
+
+
 def load_shapestacks5(dataset_name, split_name, num_threads, buffer_size):
   """
   Based on code from ogroth.
@@ -328,6 +334,15 @@ def get_dataset_params():
           "dataset_name": "clevr-obc-5vbg",
           "eval_test_samples": 10000
       },
+      "clevr-obc-3": {
+          "input_height": 128,
+          "input_width": 128,
+          "output_height": 128,
+          "output_width": 128,
+          "c_dim": 3,
+          "dataset_name": "clevr-obc-3",
+          "eval_test_samples": 10000
+      },
       "shapestacks5": {
           "input_height": 128,
           "input_width": 128,
@@ -383,6 +398,7 @@ def get_datasets():
       "clevr-3-to-6": load_clevr_3to6,
       "clevr-obc-5": load_clevr_obc_5,
       "clevr-obc-5vbg": load_clevr_obc_5vbg,
+      "clevr-obc-3": load_clevr_obc_3,
       "shapestacks5": load_shapestacks5,
       "bowl2balls": load_bowl2balls,
       "realtraffic": load_realtraffic,

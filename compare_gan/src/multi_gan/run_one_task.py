@@ -351,6 +351,38 @@ def GetMetaTasks(experiment_name):
         "embedding_dim": 32,
     }
   
+  elif experiment_name == "multi_gan-clevr-obc-3":
+    """
+    This experiment mirrors the best 5-GAN rel. bg. on CLEVR from the paper,
+    but with background interaction.
+    """
+    meta_config = {
+        "gan_type": ["MultiGANBackground"],
+        "penalty_type": [consts.WGANGP_PENALTY],
+        "discriminator_normalization": [consts.NO_NORMALIZATION],
+        "architecture": consts.DCGAN_ARCH,
+        "dataset": ["clevr-obc-3"],
+        "tf_seed": [0],
+        "training_steps": [1000000],
+        "save_checkpoint_steps": [100000],
+        "batch_size": [64],
+        "optimizer": ["adam"],
+        "learning_rate": [0.0001],
+        "lambda": [1],
+        "beta1": [0.9],
+        "beta2": [0.999],
+        "disc_iters": [5],
+        # Model params.
+        "k": [3],
+        "aggregate": ["alpha"],
+        "n_heads": 2,
+        "n_blocks": 2,
+        "share_block_weights": False,
+        "background_interaction": True,
+        "z_dim": 64,
+        "embedding_dim": 32,
+    }
+  
   elif experiment_name == "multi_gan-shapestacks5":
     """
     This experiment mirrors the best 5-GAN rel. bg. on CLEVR from the paper,
@@ -447,7 +479,6 @@ def GetMetaTasks(experiment_name):
         "embedding_dim": 32,
     }
 
-  # TODO: register clevr3
 
   #######################
   ## PAPER EXPERIMENTS ##
