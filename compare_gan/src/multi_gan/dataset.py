@@ -252,8 +252,8 @@ def load_realtraffic(dataset_name, split_name, num_threads, buffer_size):
   for video_dir in video_dirs:
     img_seq = sorted([video_dir+'/'+f for f in os.listdir(video_dir) if f[-5:]=='.jpeg'])
     for idx in range(len(img_seq)-3):
-      img_files.append(img_seq[idx:idx+2:2])
-  # build tf.dataset from filenames
+      img_files.extend(img_seq[idx:idx+2:2])
+  # build tf dataset from filenames
   dataset = tf.data.Dataset.from_generator(lambda: img_files, output_types=tf.string)
   # map preprocessing function over filenames
   def _preprocess(file_path):
