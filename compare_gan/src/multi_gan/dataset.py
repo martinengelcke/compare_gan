@@ -211,9 +211,11 @@ def load_shapestacks5(dataset_name, split_name, num_threads, buffer_size):
     ).map(datamap, num_parallel_calls=num_threads)
 
 
-def load_bowl2balls(data_root, train=True):
+def load_bowl2balls(dataset_name, split_name, num_threads, buffer_size):
+  del dataset_name
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "bowl2balls")
   # gather list of video directories
-  if train:
+  if split_name in ['train', 'val']:
     data_dir = os.path.join(data_root, 'train')
   else:
     data_dir = os.path.join(data_root, 'test')
@@ -242,7 +244,9 @@ def load_bowl2balls(data_root, train=True):
   return dataset.map(_preprocess, num_parallel_calls=num_threads)
 
 
-def load_realtraffic(data_root):
+def load_realtraffic(dataset_name, split_name, num_threads, buffer_size):
+  del dataset_name
+  data_root = os.path.join(FLAGS.multigan_dataset_root, "realtraffic")
   video_dirs = [os.path.join(data_root, f) for f in os.listdir(data_root) if f[0]=='f']
   img_files = []
   for video_dir in video_dirs:
