@@ -230,7 +230,7 @@ def load_bowl2balls(dataset_name, split_name, num_threads, buffer_size):
       img_file = f'{video_dir}/{3*idx:04d}.jpg'
       img_files.append(img_file)
   # build tf.dataset from filenames
-  dataset = tf.dataset.Dataset.from_generator(lambda: img_files, output_types=tf.string)
+  dataset = tf.data.Dataset.from_generator(lambda: img_files, output_types=tf.string)
   # map preprocessing function over filenames
   def _preprocess(file_path):
     image = tf.read_file(file_path)
@@ -254,7 +254,7 @@ def load_realtraffic(dataset_name, split_name, num_threads, buffer_size):
     for idx in range(len(img_seq)-3):
       img_files.append(img_seq[idx:idx+2:2])
   # build tf.dataset from filenames
-  dataset = tf.dataset.Dataset.from_generator(lambda: img_files, output_types=tf.string)
+  dataset = tf.data.Dataset.from_generator(lambda: img_files, output_types=tf.string)
   # map preprocessing function over filenames
   def _preprocess(file_path):
     image = tf.read_file(file_path)
