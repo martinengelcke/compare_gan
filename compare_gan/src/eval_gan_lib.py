@@ -176,7 +176,7 @@ def ComputeTFGanFIDScore(fake_images, real_images, inception_graph):
 def GetRealImages(dataset,
                   split_name,
                   num_examples,
-                  failure_on_insufficient_examples=True):
+                  failure_on_insufficient_examples=False):
   """Get num_examples images from the given dataset/split."""
   # Multithread and buffer could improve the training speed by 20%, however it
   # consumes more memory. In evaluation, we used single thread without buffer
