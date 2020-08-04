@@ -783,7 +783,7 @@ def RunCheckpointEval(checkpoint_path, task_workdir, options, tasks_to_run):
   # Adjust the number of fake images to the number of images in the test set.
   fake_images = fake_images[:num_test_examples, :, :, :]
 
-  assert fake_images.shape == real_images.shape
+  # assert fake_images.shape == real_images.shape
 
   # In case we use a 1-channel dataset (like mnist) - convert it to 3 channel.
   if fake_images.shape[3] == 1:
@@ -817,8 +817,8 @@ def RunCheckpointEval(checkpoint_path, task_workdir, options, tasks_to_run):
   shutil.rmtree(sample_dir)
   # np.save(f'{checkpoint_path}_fakeimages.npy', fake_images)
 
-  for task in tasks_to_run:
-    result_dict.update(task.RunAfterSession(options, fake_images, real_images))
+  # for task in tasks_to_run:
+  #   result_dict.update(task.RunAfterSession(options, fake_images, real_images))
 
   return result_dict
 
